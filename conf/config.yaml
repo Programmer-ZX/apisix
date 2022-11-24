@@ -61,3 +61,31 @@ deployment:
       - name: admin
         key: edd1c9f034335f136f87ad84b625c8f1  # using fixed API token has security risk, please update it when you deploy to production environment
         role: admin
+discovery:                       # service discovery center
+ consul_kv:
+   servers:
+     - "http://10.70.12.202:8500"
+   prefix: "config/apisix"
+   skip_keys:                    # if you need to skip special keys
+     - "upstreams/unused_api/"
+   timeout:
+     connect: 8000               # default 2000 ms
+     read: 8000                  # default 2000 ms
+     wait: 60                    # default 60 sec
+   weight: 1                     # default 1
+   fetch_interval: 3             # default 3 sec, only take effect for keepalive: false way
+   keepalive: true               # default true, use the long pull way to query consul servers
+   default_server:               # you can define default server when missing hit
+     host: "127.0.0.1"
+     port: 9999
+     metadata:
+       fail_timeout: 1           # default 1 ms
+       weight: 1                 # default 1
+       max_fails: 1              # default 1
+   dump:                         # if you need, when registered nodes updated can dump into file
+      path: "logs/consul_kv.dump"
+      expire: 2592000            # unit sec, here is 30 day
+apisix:
+  enable_dev_mode: true
+  ssl:
+    enable: false

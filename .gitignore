@@ -86,3 +86,6 @@ pack-v*-linux.tgz*
 # release tar package
 *.tgz
 release/*
+
+# run file
+logs/*.dump
