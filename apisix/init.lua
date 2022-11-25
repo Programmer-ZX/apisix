@@ -242,6 +242,8 @@ local function set_upstream_host(api_ctx, picked_server)
         return
     end
 
+    core.log.warn("[Mylog] set_upstream_host: pass_host-->", pass_host, "; upstream_host-->" , api_ctx.upstream_host)
+
     if pass_host == "rewrite" then
         api_ctx.var.upstream_host = api_ctx.upstream_host
         return
@@ -360,6 +362,8 @@ end
 function _M.handle_upstream(api_ctx, route, enable_websocket)
     local up_id = route.value.upstream_id
 
+    core.log.warn("[Mylog] handle_upstream: route-->", core.json.encode(route, true), ";  api_ctx-->", core.json.encode(api_ctx, true))
+
     -- used for the traffic-split plugin
     if api_ctx.upstream_id then
         up_id = api_ctx.upstream_id
@@ -433,7 +437,12 @@ function _M.handle_upstream(api_ctx, route, enable_websocket)
         return pubsub_kafka.access(api_ctx)
     end
 
+    core.log.warn("[Mylog] set_upstream begin: api_ctx-->", core.json.encode(api_ctx, true))
+
     local code, err = set_upstream(route, api_ctx)
+
+    core.log.warn("[Mylog] set_upstream end: api_ctx-->", core.json.encode(api_ctx, true))
+
     if code then
         core.log.error("failed to set upstream: ", err)
         core.response.exit(code)
@@ -448,6 +457,8 @@ function _M.handle_upstream(api_ctx, route, enable_websocket)
     api_ctx.picked_server = server
 
     set_upstream_headers(api_ctx, server)
+
+    core.log.warn("[Mylog] set_upstream_headers: api_ctx-->", core.json.encode(api_ctx, true))
 
     -- run the before_proxy method in access phase first to avoid always reinit request
     common_phase("before_proxy")
@@ -470,6 +481,9 @@ function _M.http_access_phase()
 
     -- always fetch table from the table pool, we don't need a reused api_ctx
     local api_ctx = core.tablepool.fetch("api_ctx", 0, 32)
+
+    core.log.warn("[Mylog] http_access_phase: api_ctx-->", core.json.encode(api_ctx, true))
+
     ngx_ctx.api_ctx = api_ctx
 
     if not verify_tls_client(api_ctx) then

@@ -15,7 +15,7 @@
 # limitations under the License.
 #
 basic:
-  enable: false
+  enable: true
 http_filter:
   enable: false         # enable or disable this feature
   enable_header_name: X-APISIX-Dynamic-Debug # the header name of dynamic enable

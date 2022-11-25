@@ -58,9 +58,9 @@ local function fetch_chash_hash_key(ctx, upstream)
         core.log.warn("chash_key fetch is nil, use default chash_key ",
                       "remote_addr: ", chash_key)
     end
-    core.log.info("upstream key: ", key)
-    core.log.info("hash_on: ", hash_on)
-    core.log.info("chash_key: ", core.json.delay_encode(chash_key))
+    core.log.warn("[Mylog] fetch_chash_hash_key: upstream key-->", key)
+    core.log.warn("[Mylog] fetch_chash_hash_key: hash_on-->", hash_on)
+    core.log.warn("[Mylog] fetch_chash_hash_key: chash_key-->", core.json.delay_encode(chash_key))
 
     return chash_key
 end

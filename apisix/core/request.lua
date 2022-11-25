@@ -131,6 +131,8 @@ function _M.set_header(ctx, header_name, header_value)
         changed = a6_request.is_request_header_set()
     end
 
+    log.warn("[MyLog] sethead: header_name-->", header_name, "; header_value-->", header_value)
+
     ngx.req.set_header(header_name, header_value)
 
     if is_apisix_or and not changed then
