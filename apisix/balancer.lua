@@ -97,6 +97,9 @@ end
 
 local function create_server_picker(upstream, checker)
     local picker = pickers[upstream.type]
+
+    core.log.warn("[Mylog] create_server_picker: upstream.type-->", upstream.type)
+
     if not picker then
         pickers[upstream.type] = require("apisix.balancer." .. upstream.type)
         picker = pickers[upstream.type]
@@ -113,6 +116,8 @@ local function create_server_picker(upstream, checker)
         end
 
         local up_nodes = fetch_health_nodes(upstream, checker)
+
+        core.log.warn("[Mylog] create_server_picker: up_nodes-->", core.json.encode(up_nodes))
 
         if #up_nodes._priority_index > 1 then
             core.log.info("upstream nodes: ", core.json.delay_encode(up_nodes))
@@ -193,7 +198,7 @@ end
 -- 2. each time we need to retry upstream
 local function pick_server(route, ctx)
     core.log.info("route: ", core.json.delay_encode(route, true))
-    core.log.info("ctx: ", core.json.delay_encode(ctx, true))
+    core.log.warn("[Mylog] pick_server: ctx-->", core.json.delay_encode(ctx, true))
     local up_conf = ctx.upstream_conf
 
     for _, node in ipairs(up_conf.nodes) do
@@ -343,6 +348,8 @@ end
 function _M.run(route, ctx, plugin_funcs)
     local server, err
 
+    core.log.warn("[Mylog] run: ctx-->", core.json.encode(ctx, true))
+
     if ctx.picked_server then
         -- use the server picked in the access phase
         server = ctx.picked_server
@@ -382,7 +389,7 @@ function _M.run(route, ctx, plugin_funcs)
         end
     end
 
-    core.log.info("proxy request to ", server.host, ":", server.port)
+    core.log.warn("[Mylog] run: proxy request to ", server.host, ":", server.port)
 
     local ok, err = set_current_peer(server, ctx)
     if not ok then
